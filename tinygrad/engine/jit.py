@@ -76,7 +76,7 @@ class CapturedJit(Generic[ReturnType]):
 
   def free_intermediates(self):
     for u in self._written_uops:
-      if u.op is not Ops.BUFFER or (buf:=u.arg.buffer) is None: continue
+      if (buf:=u.arg.buffer) is None: continue
       for b in (buf.bufs if isinstance(buf, MultiBuffer) else (buf,)):
         if b.is_allocated(): b.deallocate()
         if (base:=b._base) is not None and base.allocated_views == 0 and base.is_allocated(): base.deallocate()
@@ -109,7 +109,7 @@ class _TinyJit(Generic[ReturnType]):
     self.cnt: int = 2 if self.fxn is None else 0
     self.prune = prune
 
-  def add_linear(self, linear:UOp, var_vals:dict[str, int]): self._linears.append(linear)
+  def add_linear(self, linear:UOp): self._linears.append(linear)
 
   def reset(self):
     assert self.fxn is not None, "can't reset without function"
